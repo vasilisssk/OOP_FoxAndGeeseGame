@@ -3,7 +3,8 @@ package ru.vsu.cs.erokhov_v_e;
 import java.awt.*;
 
 public class Player {
-    Point coordinates;
+
+    Node node;
 
     public void move(String flag) {
         int xShift = 0;
@@ -40,4 +41,11 @@ public class Player {
         }
     }
 
+    public Node getNode() {
+        return node;
+    }
+
+    public void setNode(Node node) {
+        this.node = node;
+    }
 }
