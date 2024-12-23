@@ -1,10 +1,11 @@
-package ru.vsu.cs.erokhov_v_e;
-
-import java.awt.*;
+package ru.vsu.cs.erokhov_v_e.game;
 
 public class Player {
+    private Node nodePosition;
 
-    private Node node;
+    public Player(Node nodePosition) {
+        this.nodePosition = nodePosition;
+    }
 
     public void move(String flag) {
         int xShift = 0;
@@ -41,4 +42,11 @@ public class Player {
         }
     }
 
+    public Node getNode() {
+        return nodePosition;
+    }
+
+    public void setNode(Node node) {
+        this.nodePosition = node;
+    }
 }
