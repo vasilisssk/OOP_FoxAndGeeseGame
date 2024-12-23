@@ -5,12 +5,16 @@ import java.util.List;
 import java.util.Scanner;
 
 public class FoxAndGeeseGame {
-    private static int turnToMove = 0;
+    private static boolean foxTurn = true;
     private static boolean gameIsOver = false;
     private static GameField gameField = new GameField();
-    private static Fox fox;
+    private static Fox fox = new Fox();
     private static List<Goose> geese = new ArrayList<>();
     private static final Scanner SCANNER = new Scanner(System.in);
+
+    public void checkGameStatus() {
+        // изменить значение gameIsOver
+    }
 
     public static void main(String[] args) {
         // можно отслеживать флаг --seventeen и вместо 13 гусей добавлять 17, через switch-case
@@ -27,10 +31,6 @@ public class FoxAndGeeseGame {
                 // по ключу находим node и добавляем в goose этот node
             }
         }
-//        for (int i = 0; i < geese.size(); i++) {
-//            Goose goose = geese.get(i);
-//            System.out.println(goose.getNode().getCoordinates().toString());
-//        }
 
         System.out.print("Введите координаты для лисы. Координата x: ");
         int x = SCANNER.nextInt();
@@ -46,6 +46,7 @@ public class FoxAndGeeseGame {
         String key = x + "," + y;
         Node node = gameField.getGameFieldMap().get(key);
         node.setStatus(Status.FOX);
+        fox.setNode(node);
 
         gameField.displayGameFieldMap();
 
@@ -53,5 +54,8 @@ public class FoxAndGeeseGame {
 //        while (!gameIsOver) {
 //            break;
 //        }
+
+        // первый ход делает лиса, ее выбирать не нужно, после хода лисы нужно выбрать за какого гуся ходить, спрашиваем у пользователя координаты и проверяем их правильность,
+        // добавить возможность изменить выбор, потом спросить куда нужно походить, опять проверяем их правильность (создать метод отдельный), потом проверяем возможность хода
     }
 }

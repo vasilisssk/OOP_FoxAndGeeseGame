@@ -3,6 +3,9 @@ package ru.vsu.cs.erokhov_v_e.game;
 public class Player {
     private Node nodePosition;
 
+    public Player() {
+    }
+
     public Player(Node nodePosition) {
         this.nodePosition = nodePosition;
     }
@@ -40,6 +43,8 @@ public class Player {
                 yShift = 1;
             }
         }
+        // учитываем флаг, получаем новые координаты, проверяем есть ли они в мапе или эта клетка пуста (status == null), если да, то
+        // перемещаемся туда, если нет то выводим, что такой ход не может быть произведен (мб возвращать boolean чтобы проверять возможность хода)
     }
 
     public Node getNode() {

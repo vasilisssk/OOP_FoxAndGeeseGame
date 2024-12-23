@@ -5,4 +5,8 @@ public class Fox extends Player{
     public Fox(Node nodePosition) {
         super(nodePosition);
     }
+
+    public Fox() {
+
+    }
 }
