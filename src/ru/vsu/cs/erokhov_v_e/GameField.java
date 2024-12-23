@@ -12,7 +12,7 @@ public class GameField {
             for (int j = 0; j < 7; j++) {
                 if (!((i <= 1 && j <= 1) || (i <= 1 && j >= 5) || (i >= 5 && j <= 1) || (i >= 5 && j >= 5))) {
                     String key = i + "," + j;
-                    gameField.put(key, new Node(new Point(i, j), Status.EMPTY));
+                    gameField.put(key, new Node(new Point(i, j), null/*Status.EMPTY*/));
                 }
             }
         }

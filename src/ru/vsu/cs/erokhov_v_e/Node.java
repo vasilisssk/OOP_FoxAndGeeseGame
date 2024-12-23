@@ -4,13 +4,15 @@ import java.awt.*;
 import java.util.ArrayList;
 
 public class Node {
-    private Status status;
+    //private Status status;
+    private Player player;
     private Point coordinates;
     private ArrayList<Node> connections = new ArrayList<>();
 
-    public Node(Point coordinates, Status status) {
+    public Node(Point coordinates, Player player/*Status status*/) {
         this.coordinates = coordinates;
-        this.status = status;
+        this.player = player;
+        //this.status = status;
     }
 
     public void connect(Node node) {
@@ -25,13 +27,21 @@ public class Node {
         this.coordinates = coordinates;
     }
 
-    public Status getStatus() {
-        return status;
+    public Player getPlayer() {
+        return player;
     }
 
-    public void setStatus(Status status) {
-        this.status = status;
+    public void setPlayer(Player player) {
+        this.player = player;
     }
+
+    //    public Status getStatus() {
+//        return status;
+//    }
+//
+//    public void setStatus(Status status) {
+//        this.status = status;
+//    }
 
     public ArrayList<Node> getConnections() {
         return connections;
