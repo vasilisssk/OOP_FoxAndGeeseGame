@@ -12,47 +12,109 @@ public class FoxAndGeeseGame {
     private static List<Goose> geese = new ArrayList<>();
     private static final Scanner SCANNER = new Scanner(System.in);
 
-    public void checkGameStatus() {
+    public static void checkGameStatus() {
         // изменить значение gameIsOver
     }
 
-    public static void main(String[] args) {
-        // можно отслеживать флаг --seventeen и вместо 13 гусей добавлять 17, через switch-case
-        gameField.createGameFieldMap();
-        for (int j = 4; j < 7; j++) {
-            for (int k = 0; k < 7; k++) {
-                String key = k + "," + j;
-                if (gameField.getGameFieldMap().containsKey(key)) {
-                    Node node = gameField.getGameFieldMap().get(key);
-                    node.setStatus(Status.GOOSE);
-                    Goose goose = new Goose(node);
-                    geese.add(goose);
+    public static void placeGeese(int geeseAmount) {
+        if (geeseAmount == 17) {
+            for (int i = 4; i < 7; i++) {
+                for (int j = 0; j < 7; j++) {
+                    // по ключу находим node и добавляем в goose этот node
+                    String key = j + "," + i;
+                    if (gameField.getGameFieldMap().containsKey(key)) {
+                        Node node = gameField.getGameFieldMap().get(key);
+                        node.setStatus(Status.GOOSE);
+                        Goose goose = new Goose(node);
+                        geese.add(goose);
+                    }
                 }
-                // по ключу находим node и добавляем в goose этот node
+            }
+            for (int i = 0; i <= 6; i += 6) {
+                for (int j = 2; j < 4; j++) {
+                    String key = i + "," + j;
+                    if (gameField.getGameFieldMap().containsKey(key)) {
+                        Node node = gameField.getGameFieldMap().get(key);
+                        node.setStatus(Status.GOOSE);
+                        Goose goose = new Goose(node);
+                        geese.add(goose);
+                    }
+                }
             }
         }
-
-        System.out.print("Введите координаты для лисы. Координата x: ");
-        int x = SCANNER.nextInt();
-        System.out.print("Координата y: ");
-        int y = SCANNER.nextInt();
-        while (y >= 4 || (x <= 1 && y <= 1 || x >= 5 && y <= 1)) {
-            System.out.print("Неправильные значения координат! Введите их повторно. Новая координата x: ");
-            x = SCANNER.nextInt();
-            System.out.print("Новая координата y: ");
-            y = SCANNER.nextInt();
+        else {
+            // по дефолту считается, что гусей 13
+            for (int i = 4; i < 7; i++) {
+                for (int j = 0; j < 7; j++) {
+                    // по ключу находим node и добавляем в goose этот node
+                    String key = j + "," + i;
+                    if (gameField.getGameFieldMap().containsKey(key)) {
+                        Node node = gameField.getGameFieldMap().get(key);
+                        node.setStatus(Status.GOOSE);
+                        Goose goose = new Goose(node);
+                        geese.add(goose);
+                    }
+                }
+            }
         }
+    }
 
-        String key = x + "," + y;
-        Node node = gameField.getGameFieldMap().get(key);
-        node.setStatus(Status.FOX);
-        fox.setNode(node);
+    public static void placeFox() {
+        while (true) {
+            System.out.print("\nВведите координаты для лисы. Координата x: ");
+            int x = SCANNER.nextInt();
+            System.out.print("Координата y: ");
+            int y = SCANNER.nextInt();
+            String key = x+","+y;
+            if (gameField.getGameFieldMap().containsKey(key)) {
+                Node node = gameField.getGameFieldMap().get(key);
+                if (node.getStatus() == null) {
+                    node = gameField.getGameFieldMap().get(key);
+                    node.setStatus(Status.FOX);
+                    fox.setNode(node);
+                    break;
+                } else {
+                    System.out.println("На этих координатах расположен гусь.");
+                }
+            } else {
+                System.out.println("Значения координат находятся за пределами игрового поля.");
+            }
+        }
+    }
 
+    public static void main(String[] args) {
+        gameField.createGameFieldMap();
+
+        System.out.print("Укажите сколько гусей будет в игре: 13 или 17? - ");
+        int geeseAmount = SCANNER.nextInt();
+        placeGeese(geeseAmount);
+        System.out.println("\nИгровое поле после расстановки гусей:");
         gameField.displayGameFieldMap();
 
+        placeFox();
 
+        System.out.println("\nИгровое поле после расстановки лисы:");
+        gameField.displayGameFieldMap();
+
+        System.out.println("\nПервый ход делает лиса!");
+
+//        gameLoop:
 //        while (!gameIsOver) {
-//            break;
+//            while (foxTurn) {
+//                System.out.println("");
+//            }
+//            if (!foxTurn) {
+//                System.out.println();
+//                foxTurn = !foxTurn;
+//            }
+//
+//            System.out.println("\nИгровое поле после хода: ");
+//            gameField.displayGameFieldMap();
+//
+//            if (gameIsOver) {
+//                break gameLoop;
+//            }
+//
 //        }
 
         // первый ход делает лиса, ее выбирать не нужно, после хода лисы нужно выбрать за какого гуся ходить, спрашиваем у пользователя координаты и проверяем их правильность,

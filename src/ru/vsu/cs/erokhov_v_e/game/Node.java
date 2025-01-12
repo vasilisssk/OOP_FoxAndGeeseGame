@@ -37,11 +37,11 @@ public class Node {
     }
 
     public List<Node> getConnections() {
-        return List.copyOf(connections);
+        return new ArrayList<>(connections);
     }
 
     public void setConnections(List<Node> connections) {
-        this.connections = List.copyOf(connections);
+        this.connections = new ArrayList<>(connections);
     }
 
     @Override

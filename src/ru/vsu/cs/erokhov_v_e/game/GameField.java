@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class GameField {
-    Map<String, Node> gameFieldMap = new HashMap<>();
+    private Map<String, Node> gameFieldMap = new HashMap<>();
 
     public void createGameFieldMap() {
         for (int i = 0; i < 7; i++) {
@@ -37,8 +37,9 @@ public class GameField {
     }
 
     public void displayGameFieldMap() {
+        System.out.println("  0123456");
         for (int i = 0; i < 7; i++) {
-            String finalString = "";
+            String finalString = i + " ";
             for (int j = 0; j < 7; j++) {
                 String key = j + "," + i;
                 if (gameFieldMap.containsKey(key)) {
@@ -59,10 +60,10 @@ public class GameField {
     }
 
     public Map<String, Node> getGameFieldMap() {
-        return Map.copyOf(gameFieldMap);
+        return new HashMap<>(gameFieldMap);
     }
 
     public void setGameFieldMap(Map<String, Node> gameFieldMap) {
-        this.gameFieldMap = Map.copyOf(gameFieldMap);
+        this.gameFieldMap = new HashMap<>(gameFieldMap);
     }
 }
