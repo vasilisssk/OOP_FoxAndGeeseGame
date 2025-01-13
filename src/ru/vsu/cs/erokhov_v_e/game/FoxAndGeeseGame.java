@@ -68,9 +68,9 @@ public class FoxAndGeeseGame {
     public static void placeFox() {
         while (true) {
             System.out.print("\nВведите координаты для лисы. Координата x: ");
-            int x = SCANNER.nextInt();
+            int x = checkInt();
             System.out.print("Координата y: ");
-            int y = SCANNER.nextInt();
+            int y = checkInt();
             String key = x + "," + y;
             if (gameField.getGameFieldMap().containsKey(key)) {
                 Node node = gameField.getGameFieldMap().get(key);
@@ -186,9 +186,23 @@ public class FoxAndGeeseGame {
         node.setStatus(null);
     }
 
+    public static int checkInt() {
+        int number;
+        while (true) {
+            if (SCANNER.hasNextInt()) {
+                number = SCANNER.nextInt();
+                break;
+            } else {
+                System.out.print("Введено неверное значение int. Введите его повторно: ");
+                SCANNER.next();
+            }
+        }
+        return number;
+    }
+
     public static void main(String[] args) {
         System.out.print("Укажите сколько гусей будет в игре: 13 или 17 (обычно всегда 13 гусей)? - ");
-        int geeseAmount = SCANNER.nextInt();
+        int geeseAmount = checkInt();
         placeGeese(geeseAmount);
         System.out.println("\nИгровое поле после расстановки гусей:");
         gameField.displayGameFieldMap();
@@ -198,8 +212,8 @@ public class FoxAndGeeseGame {
         System.out.println("\nИгровое поле после расстановки лисы:");
         gameField.displayGameFieldMap();
 
-        System.out.println("\n|Команды для хода  |\n|U - вверх         |\n|UR - вверх, вправо|\n|R - вправо        |\n|DR - вниз, вправо |" +
-                "\n|D - вниз          |\n|DL - вниз, влево  |\n|L - влево         |\n|UL - вверх, влево |");
+        System.out.println("\n|--Команды для хода:--|\n|U /u  - вверх        |\n|UR/ur - вверх, вправо|\n|R /r  - вправо       |\n|DR/dr - вниз, вправо |" +
+                "\n|D /d  - вниз         |\n|DL/dl - вниз, влево  |\n|L /l  - влево        |\n|UL/ul - вверх, влево |");
         System.out.println("\nПервый ход делает лиса!");
 
         gameLoop:
@@ -224,24 +238,24 @@ public class FoxAndGeeseGame {
 
             if (!foxTurn) {
                 System.out.print("Выберите гуся за которого хотите походить. Координата x: ");
-                int x = SCANNER.nextInt();
+                int x = checkInt();
                 System.out.print("Координата y: ");
-                int y = SCANNER.nextInt();
+                int y = checkInt();
                 String key = x + "," + y;
                 while (true) {
                     while (!gameField.getGameFieldMap().containsKey(key)) {
                         System.out.print("Неверные координаты. Введите их заново. Координата x: ");
-                        x = SCANNER.nextInt();
+                        x = checkInt();
                         System.out.print("Координата y: ");
-                        y = SCANNER.nextInt();
+                        y = checkInt();
                         key = x + "," + y;
                     }
                     Node node = gameField.getGameFieldMap().get(key);
                     while (node.getStatus() != Status.GOOSE) {
                         System.out.print("На этих координатах нет гуся. Введите их заново. Координата x: ");
-                        x = SCANNER.nextInt();
+                        x = checkInt();
                         System.out.print("Координата y: ");
-                        y = SCANNER.nextInt();
+                        y = checkInt();
                         key = x + "," + y;
                     }
                     break;
