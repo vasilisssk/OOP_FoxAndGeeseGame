@@ -7,7 +7,7 @@ import java.util.Map;
 public class GameField {
     private Map<String, Node> gameFieldMap = new HashMap<>();
 
-    public void createGameFieldMap() {
+    public GameField() {
         for (int i = 0; i < 7; i++) {
             for (int j = 0; j < 7; j++) {
                 if (!((i <= 1 && j <= 1) || (i <= 1 && j >= 5) || (i >= 5 && j <= 1) || (i >= 5 && j >= 5))) {
@@ -24,7 +24,7 @@ public class GameField {
                     for (int k = -1; k <= 1; k++) {
                         for (int l = -1; l <= 1; l++) {
                             if (!(k == 0 && l == 0)) {
-                                String key2 = (j+l) + "," + (i+k);
+                                String key2 = (i+l) + "," + (j+k);
                                 if (gameFieldMap.containsKey(key2)) {
                                     node.connect(gameFieldMap.get(key2));
                                 }
@@ -35,6 +35,10 @@ public class GameField {
             }
         }
     }
+
+//    public void createGameFieldMap() {
+//
+//    }
 
     public void displayGameFieldMap() {
         System.out.println("  0123456");

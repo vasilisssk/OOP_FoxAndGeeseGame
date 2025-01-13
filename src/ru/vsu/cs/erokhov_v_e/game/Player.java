@@ -32,7 +32,9 @@ public class Player {
         return yShift;
     }
 
-    public void move(String flag) {};
+//    public boolean move(String flag, GameField gameField) {
+//        return false;
+//    }
 
 
 //    public void move(String flag) {

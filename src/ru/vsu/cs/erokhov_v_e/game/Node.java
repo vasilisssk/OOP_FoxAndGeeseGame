@@ -2,9 +2,8 @@ package ru.vsu.cs.erokhov_v_e.game;
 
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 public class Node {
     private Status status;
@@ -47,5 +46,18 @@ public class Node {
     @Override
     public String toString() {
         return coordinates.x + "," + coordinates.y;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Node node = (Node) o;
+        return coordinates.equals(node.coordinates);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(coordinates);
     }
 }
