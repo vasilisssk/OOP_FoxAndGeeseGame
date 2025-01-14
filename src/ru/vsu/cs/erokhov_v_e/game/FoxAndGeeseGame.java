@@ -13,14 +13,39 @@ public class FoxAndGeeseGame {
     private static List<Goose> geese = new ArrayList<>();
     private static String winner = "";
     private static final Scanner SCANNER = new Scanner(System.in);
-    private static final String[] commands = new String[]{"U", "R", "D", "L", "UR", "DR", "DL", "UL"};
+    private static final String[] commands = new String[] {"U", "R", "D", "L", "UR", "DR", "DL", "UL"};
 
     public static void checkGameStatus() {
         if (geese.size() <= 5) {
             gameIsOver = !gameIsOver;
-            winner += "Лиса";
+            winner += " Лиса";
+            return;
         }
-
+        int x = fox.getNode().getCoordinates().x;
+        int y = fox.getNode().getCoordinates().y;
+        boolean geeseBlockedFox = true;
+        List<Node> foxNodeConnections = fox.getNode().getConnections();
+        upperLoop:
+        for (Node node1 : foxNodeConnections) {
+            if (node1.getStatus() != Status.GOOSE) {
+                geeseBlockedFox = false;
+                break upperLoop;
+            }
+            for (Node node2 : node1.getConnections()) {
+                if ((Math.abs(node2.getCoordinates().x-x) == 0 && Math.abs(node2.getCoordinates().y-y) == 2) ||
+                        (Math.abs(node2.getCoordinates().x-x) == 2 && Math.abs(node2.getCoordinates().y-y) == 0) ||
+                        (Math.abs(node2.getCoordinates().x-x) == 2 && Math.abs(node2.getCoordinates().y-y) == 2)) {
+                    if (node2.getStatus() != Status.GOOSE) {
+                        geeseBlockedFox = false;
+                        break upperLoop;
+                    }
+                }
+            }
+        }
+        if (geeseBlockedFox) {
+            gameIsOver = !gameIsOver;
+            winner += " Гуси";
+        }
     }
 
     public static void placeGeese(int geeseAmount) {
@@ -220,10 +245,10 @@ public class FoxAndGeeseGame {
         while (!gameIsOver) {
             if (foxTurn) {
                 System.out.print("Введите ход для лисы: ");
-                String flag = SCANNER.next();
+                String flag = SCANNER.next().toUpperCase();
                 while (!moveFox(flag, fox)) {
                     System.out.print("Неверные данные для хода. Введите код команды повторно: ");
-                    flag = SCANNER.next();
+                    flag = SCANNER.next().toUpperCase();
                 }
                 foxTurn = !foxTurn;
                 System.out.println("\nИгровое поле после хода лисы:");
@@ -257,6 +282,7 @@ public class FoxAndGeeseGame {
                         System.out.print("Координата y: ");
                         y = checkInt();
                         key = x + "," + y;
+                        node = gameField.getGameFieldMap().get(key);
                     }
                     break;
                 }
@@ -268,10 +294,10 @@ public class FoxAndGeeseGame {
                     }
                 }
                 System.out.print("Введите ход для гуся: ");
-                String flag = SCANNER.next();
+                String flag = SCANNER.next().toUpperCase();
                 while (!moveGoose(flag, goose)) {
                     System.out.print("Неверные данные для хода. Введите код команды повторно: ");
-                    flag = SCANNER.next();
+                    flag = SCANNER.next().toUpperCase();
                 }
                 foxTurn = !foxTurn;
                 System.out.println("\nИгровое поле после хода гуся:");
