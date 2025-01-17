@@ -2,9 +2,8 @@ package ru.vsu.cs.erokhov_v_e.game;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
-public class FoxAndGeeseGame {
+public class FoxAndGeeseGame implements CalculateMoves{
     private Strategy foxStrategy;
     private Strategy geeseStrategy;
     private boolean foxTurn = true;
@@ -13,7 +12,6 @@ public class FoxAndGeeseGame {
     private Fox fox = new Fox();
     private List<Goose> geese = new ArrayList<>();
     private String winner = "";
-    private final Scanner SCANNER = new Scanner(System.in);
     private int geeseAmount;
 
     public FoxAndGeeseGame(Strategy foxStrategy, Strategy geeseStrategy, int geeseAmount) {
@@ -40,8 +38,10 @@ public class FoxAndGeeseGame {
         gameLoop:
         while (!gameIsOver) {
             if (foxTurn) {
-                foxStrategy.moveFox(fox,geese,gameField);
                 foxTurn = !foxTurn;
+                if (foxStrategy.moveFox(fox,geese,this)) {
+                    foxTurn = !foxTurn;
+                }
                 System.out.println("\nИгровое поле после хода лисы:");
                 gameField.displayGameFieldMap();
             }
@@ -53,7 +53,7 @@ public class FoxAndGeeseGame {
             }
 
             if (!foxTurn) {
-                geeseStrategy.moveGoose(geese, gameField);
+                geeseStrategy.moveGoose(geese,this);
                 foxTurn = !foxTurn;
                 System.out.println("\nИгровое поле после хода гуся:");
                 gameField.displayGameFieldMap();
@@ -140,5 +140,104 @@ public class FoxAndGeeseGame {
                 }
             }
         }
+    }
+    @Override
+    public Boolean calculateFoxMove(Movement movement, Fox fox, List<Goose> geese) {
+        if (movement == null) {
+            return false;
+        }
+        int counter = 0;
+        Node foxNode = fox.getNode();
+        List<Node> foxNodeConnections = foxNode.getConnections();
+        Coordinate foxCoordinate = foxNode.getCoordinate();
+        Coordinate goalCoordinate = fox.getNode().getCoordinate().get(movement);
+        for (int i = 0; i < foxNodeConnections.size(); i++) {
+            if (!foxNodeConnections.get(i).getCoordinate().equals(goalCoordinate)) {
+                counter++;
+            }
+        }
+        if (counter == foxNodeConnections.size()) {
+            return false;
+        }
+        Node connectedNode = null;
+        for (int i = 0; i < foxNode.getConnections().size(); i++) {
+            connectedNode = foxNode.getConnections().get(i);
+            if (connectedNode.getCoordinate().equals(goalCoordinate)) {
+                break;
+            }
+        }
+
+        if (connectedNode.getStatus() == Status.EMPTY) {
+            foxNode.setStatus(Status.EMPTY);
+            fox.setNode(connectedNode);
+            connectedNode.setStatus(Status.FOX);
+            return true;
+        }
+
+        if (connectedNode.getStatus() == Status.GOOSE) {
+            Coordinate eatGooseCoordinate = foxCoordinate.get(movement, 2);
+            Node eatGooseNode;
+            for (int i = 0; i < connectedNode.getConnections().size(); i++) {
+                eatGooseNode = connectedNode.getConnections().get(i);
+                if (eatGooseNode.getCoordinate().equals(eatGooseCoordinate)) {
+                    if (eatGooseNode.getStatus() == Status.GOOSE) {
+                        System.out.println("Можно съесть гуся, если только по итогу хода вы окажитесь на свободной клетке!");
+                        return false;
+                    }
+                    foxNode.setStatus(Status.EMPTY);
+                    fox.setNode(eatGooseNode);
+                    eatGooseNode.setStatus(Status.FOX);
+                    eatGoose(connectedNode, geese);
+                    System.out.println("Лиса съела гуся по координатам: x=" + goalCoordinate.getX() + ", y=" + goalCoordinate.getY() + ". Гусей осталось: " + geese.size() + ". Ходит снова лиса.");
+                    return null;
+                }
+            }
+        }
+        return false;
+    }
+
+
+    public void eatGoose(Node node, List<Goose> geese) {
+        for (int i = 0; i < geese.size(); i++) {
+            if (geese.get(i).getNode().equals(node)) {
+                geese.remove(i);
+                break;
+            }
+        }
+        node.setStatus(Status.EMPTY);
+    }
+
+    @Override
+    public boolean calculateGooseMove(Movement movement, Goose goose) {
+        if (movement == null) {
+            return false;
+        }
+        int counter = 0;
+        Node gooseNode = goose.getNode();
+        List<Node> gooseNodeConnections = gooseNode.getConnections();
+        Coordinate gooseCoordinate = gooseNode.getCoordinate();
+        Coordinate goalCoordinate = gooseCoordinate.get(movement);
+        for (int i = 0; i < gooseNodeConnections.size(); i++) {
+            if (!gooseNodeConnections.get(i).getCoordinate().equals(goalCoordinate)) {
+                counter++;
+            }
+        }
+        if (counter == gooseNodeConnections.size()) {
+            return false;
+        }
+        Node connectedNode = null;
+        for (int i = 0; i < gooseNodeConnections.size(); i++) {
+            connectedNode = gooseNodeConnections.get(i);
+            if (connectedNode.getCoordinate().equals(goalCoordinate)) {
+                break;
+            }
+        }
+        if (connectedNode.getStatus() == Status.EMPTY) {
+            gooseNode.setStatus(Status.EMPTY);
+            goose.setNode(connectedNode);
+            connectedNode.setStatus(Status.GOOSE);
+            return true;
+        }
+        return false;
     }
 }

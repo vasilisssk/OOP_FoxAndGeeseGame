@@ -2,7 +2,7 @@ package ru.vsu.cs.erokhov_v_e.game;
 
 import java.util.Objects;
 
-public final class Coordinate {
+public class Coordinate {
 
     private final int x;
     private final int  y;

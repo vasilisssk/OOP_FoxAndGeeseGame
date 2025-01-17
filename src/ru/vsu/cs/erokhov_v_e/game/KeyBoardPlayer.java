@@ -1,183 +1,83 @@
 package ru.vsu.cs.erokhov_v_e.game;
 
 import java.util.List;
-import java.util.ListResourceBundle;
-import java.util.Scanner;
 
-import static ru.vsu.cs.erokhov_v_e.game.Util.checkInt;
+import static ru.vsu.cs.erokhov_v_e.game.Util.*;
+
 
 public class KeyBoardPlayer implements Strategy {
-    private static final Scanner scanner = new Scanner(System.in);
 
     @Override
-    public void placeFox(Fox fox, GameField gameField) {
+    public void placeFox(Fox fox, GetNode getNodeInter) {
+        System.out.print("\nРазместите лису.");
         while (true) {
-            System.out.print("\nВведите координаты для лисы. Координата x: ");
-            int x = checkInt();
-            System.out.print("Координата y: ");
-            int y = checkInt();
-            Coordinate coordinate = new Coordinate(x, y);
-            if (gameField.getGameFieldMap().containsKey(coordinate)) {
-                Node node = gameField.getGameFieldMap().get(coordinate);
-                if (node.getStatus() == Status.EMPTY) {
-                    node = gameField.getGameFieldMap().get(coordinate);
-                    node.setStatus(Status.FOX);
-                    fox.setNode(node);
-                    break;
-                } else {
-                    System.out.println("На этих координатах расположен гусь.");
-                }
-            } else {
-                System.out.println("Значения координат находятся за пределами игрового поля.");
+            Coordinate coordinate = writeUserCoordinate();
+            Node node = getNodeInter.getNode(coordinate);
+            if (node == null) {
+                System.out.println("Значения координат находятся за пределами игрового поля. Введите их заново.");
+            }
+            else if (node.getStatus() == Status.GOOSE) {
+                System.out.println("На этих координатах расположен гусь. Введите координаты заново.");
+            }
+            else if (node.getStatus() == Status.EMPTY) {
+                node.setStatus(Status.FOX);
+                fox.setNode(node);
+                break;
             }
         }
     }
 
     @Override
-    public void moveFox(Fox fox, List<Goose> geese, GameField gameField) {
+    public boolean moveFox(Fox fox, List<Goose> geese, CalculateMoves calculateMoves) {
         System.out.print("Введите ход для лисы: ");
-        String flag = scanner.next().toUpperCase();
-        Movement movement = Movement.fromString(flag);
-        while (!calculateFoxMove(movement, fox, gameField, geese)) {
-            System.out.print("Неверные данные для хода. Введите код команды повторно: ");
-            flag = scanner.next().toUpperCase();
-            movement = Movement.fromString(flag);
+        Movement movement = writeUserMovementFox();
+        while (true) {
+            Boolean gooseWasEaten = calculateMoves.calculateFoxMove(movement, fox, geese);
+            if (gooseWasEaten == null) {
+                return true;
+            }
+            else if (!gooseWasEaten) {
+                System.out.print("Неверные данные для хода. Введите код команды повторно: ");
+                movement = writeUserMovementFox();
+            } else {
+                return false;
+            }
+
         }
     }
 
     @Override
-    public void moveGoose(List<Goose> geese, GameField gameField) {
-        System.out.print("Выберите гуся за которого хотите походить. Координата x: ");
-        int x = checkInt();
-        System.out.print("Координата y: ");
-        int y = checkInt();
-        Coordinate coordinate = new Coordinate(x, y);
-
-        while (true) {
-            while (!gameField.getGameFieldMap().containsKey(coordinate)) {
-                System.out.print("Неверные координаты. Введите их заново. Координата x: ");
-                x = checkInt();
-                System.out.print("Координата y: ");
-                y = checkInt();
-                coordinate = new Coordinate(x, y);
-            }
-            Node node = gameField.getGameFieldMap().get(coordinate);
-
-            while (node.getStatus() != Status.GOOSE) {
-                System.out.print("На этих координатах нет гуся. Введите их заново. Координата x: ");
-                x = checkInt();
-                System.out.print("Координата y: ");
-                y = checkInt();
-                coordinate = new Coordinate(x, y);
-                node = gameField.getGameFieldMap().get(coordinate);
-            }
-            break;
-        }
+    public void moveGoose(List<Goose> geese, CalculateMoves calculateMoves) {
+        System.out.print("\nВыберите гуся за которого хотите походить.");
+        Coordinate coordinate = writeUserCoordinate();
 
         Goose goose = null;
-        for (int i = 0; i < geese.size(); i++) {
-            goose = geese.get(i);
-            if (goose.getNode().equals(gameField.getGameFieldMap().get(coordinate))) {
+        upperLoop:
+        while (true) {
+            int counter = 0;
+            for (int i = 0; i < geese.size(); i++) {
+                goose = geese.get(i);
+                if (!goose.getNode().getCoordinate().equals(coordinate)) {
+                    counter++;
+                } else {
+                    break upperLoop;
+                }
+            }
+            if (counter == geese.size()) {
+                System.out.println("На этих координатах нет гуся. Введите их заново.");
+                coordinate = writeUserCoordinate();
+            }
+            else {
                 break;
             }
         }
 
         System.out.print("Введите ход для гуся: ");
-        String flag = scanner.next().toUpperCase();
-        Movement movement = Movement.fromString(flag);
+        Movement movement = writeUserMovementGoose();
 
-        while (movement == null) {
-            System.out.print("Неверное значение хода. Введите его заново:  ");
-            flag = scanner.next().toUpperCase();
-            movement = Movement.fromString(flag);
-        }
-
-
-        while (!calculateGooseMove(movement, goose, gameField)) {
+        while (!calculateMoves.calculateGooseMove(movement, goose)) {
             System.out.print("Неверные данные для хода. Введите код команды повторно: ");
-            flag = scanner.next().toUpperCase();
-            movement = Movement.fromString(flag);
+            movement = writeUserMovementGoose();
         }
-    }
-
-    public boolean calculateGooseMove(Movement movement, Goose goose, GameField gameField) {
-        if (movement == null) {
-            return false;
-        }
-        Node gooseNode = goose.getNode();
-        Coordinate gooseCoordinate = gooseNode.getCoordinate();
-        Coordinate goalCoordinate = gooseCoordinate.get(movement);
-        if (!gameField.getGameFieldMap().containsKey(goalCoordinate)) {
-            return false;
-        }
-        Node connectedNode = null;
-        for (int i = 0; i < gooseNode.getConnections().size(); i++) {
-            connectedNode = gooseNode.getConnections().get(i);
-            if (connectedNode.getCoordinate().equals(goalCoordinate)) {
-                break;
-            }
-        }
-        if (connectedNode.getStatus() == Status.EMPTY) {
-            gooseNode.setStatus(Status.EMPTY);
-            goose.setNode(connectedNode);
-            connectedNode.setStatus(Status.GOOSE);
-            return true;
-        }
-        return false;
-    }
-
-    public boolean calculateFoxMove(Movement movement, Fox fox, GameField gameField, List<Goose> geese) {
-        if (movement == null) {
-            return false;
-        }
-        Node foxNode = fox.getNode();
-        Coordinate foxCoordinate = foxNode.getCoordinate();
-        Coordinate goalCoordinate = fox.getNode().getCoordinate().get(movement);
-        if (!gameField.getGameFieldMap().containsKey(goalCoordinate)) {
-            return false;
-        }
-        Node connectedNode = null;
-        for (int i = 0; i < foxNode.getConnections().size(); i++) {
-            connectedNode = foxNode.getConnections().get(i);
-            if (connectedNode.getCoordinate().equals(goalCoordinate)) {
-                break;
-            }
-        }
-        if (connectedNode.getStatus() == Status.EMPTY) {
-            foxNode.setStatus(Status.EMPTY);
-            fox.setNode(connectedNode);
-            connectedNode.setStatus(Status.FOX);
-            return true;
-        }
-        if (connectedNode.getStatus() == Status.GOOSE) {
-            Coordinate eatGooseCoordinate = foxCoordinate.get(movement, 2);
-            Node eatGooseNode;
-            for (int i = 0; i < connectedNode.getConnections().size(); i++) {
-                eatGooseNode = connectedNode.getConnections().get(i);
-                if (eatGooseNode.getCoordinate().equals(eatGooseCoordinate)) {
-                    if (eatGooseNode.getStatus() == Status.GOOSE) {
-                        System.out.println("Можно съесть гуся, если только по итогу хода вы окажитесь на свободной клетке!");
-                        return false;
-                    }
-                    foxNode.setStatus(Status.EMPTY);
-                    fox.setNode(eatGooseNode);
-                    eatGooseNode.setStatus(Status.FOX);
-                    eatGoose(connectedNode, geese);
-                    System.out.println("Лиса съела гуся по координатам: x=" + goalCoordinate.getX() + ", y=" + goalCoordinate.getY() + ". Гусей осталось: " + geese.size() + ". Ходит снова лиса.");
-                    moveFox(fox, geese, gameField);
-                }
-            }
-        }
-        return false;
-    }
-
-    public void eatGoose(Node node, List<Goose> geese) {
-        for (int i = 0; i < geese.size(); i++) {
-            if (geese.get(i).getNode().equals(node)) {
-                geese.remove(i);
-                break;
-            }
-        }
-        node.setStatus(Status.EMPTY);
     }
 }

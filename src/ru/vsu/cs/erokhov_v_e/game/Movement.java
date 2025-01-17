@@ -30,6 +30,16 @@ public enum Movement {
         return dx;
     }
 
+    public static Movement getMovement(int dx, int dy) {
+        Movement[] movementArray = Movement.values();
+        for (int i = 0; i < movementArray.length; i++) {
+            if (movementArray[i].dx == dx && movementArray[i].dy == dy) {
+                return movementArray[i];
+            }
+        }
+        return null;
+    }
+
     private static Map<String, Movement> byString = new TreeMap<>();
     static {
         byString.put("U", UP);

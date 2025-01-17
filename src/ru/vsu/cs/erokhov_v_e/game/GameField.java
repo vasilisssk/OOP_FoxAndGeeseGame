@@ -3,7 +3,7 @@ package ru.vsu.cs.erokhov_v_e.game;
 import java.util.HashMap;
 import java.util.Map;
 
-public class GameField {
+public class GameField implements GetNode {
     private Map<Coordinate, Node> gameFieldMap = new HashMap<>();
 
     public GameField() {
@@ -40,18 +40,18 @@ public class GameField {
         for (int i = 0; i < 7; i++) {
             String finalString = i + " ";
             for (int j = 0; j < 7; j++) {
-                Coordinate coordinates = new Coordinate(j,i);
+                Coordinate coordinates = new Coordinate(j, i);
                 if (gameFieldMap.containsKey(coordinates)) {
                     Status status = gameFieldMap.get(coordinates).getStatus();
                     if (status == Status.FOX) {
-                        finalString+="F";
+                        finalString += "F";
                     } else if (status == Status.GOOSE) {
-                        finalString+="G";
+                        finalString += "G";
                     } else if (status == Status.EMPTY) {
-                        finalString+="x";
+                        finalString += "x";
                     }
                 } else {
-                    finalString+="-";
+                    finalString += "-";
                 }
             }
             System.out.println(finalString);
@@ -62,7 +62,8 @@ public class GameField {
         return Map.copyOf(gameFieldMap);
     }
 
-    public void setGameFieldMap(Map<Coordinate, Node> gameFieldMap) {
-        this.gameFieldMap = Map.copyOf(gameFieldMap);
+    @Override
+    public Node getNode(Coordinate coordinate) {
+        return gameFieldMap.getOrDefault(coordinate, null);
     }
 }

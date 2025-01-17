@@ -5,7 +5,7 @@ import java.util.Scanner;
 public class Main {
     private final static Scanner scanner = new Scanner(System.in);
     public static void main(String[] args) {
-        int geeseAmount = 0;
+        int geeseAmount;
         System.out.print("Введите количество гусей: 13 или 17. - ");
         while (true) {
             if (scanner.hasNextInt()) {
@@ -17,9 +17,11 @@ public class Main {
                 scanner.next();
             }
         }
-        Bot foxStrategy = new Bot();
-        Bot geeseStrategy = new Bot();
-        FoxAndGeeseGame foxAndGeeseGame = new FoxAndGeeseGame(foxStrategy, geeseStrategy, geeseAmount);
+        Bot bot1 = new Bot();
+        Bot bot2 = new Bot();
+        KeyBoardPlayer keyBoardPlayer1 = new KeyBoardPlayer();
+        KeyBoardPlayer keyBoardPlayer2 = new KeyBoardPlayer();
+        FoxAndGeeseGame foxAndGeeseGame = new FoxAndGeeseGame(bot1, keyBoardPlayer2, geeseAmount);
         foxAndGeeseGame.play();
     }
 
