@@ -23,11 +23,11 @@ public class KeyBoardPlayer implements Strategy {
             if (node == null) {
                 System.out.println("Значения координат находятся за пределами игрового поля. Введите их заново.");
             }
-            else if (node.getStatus() == Status.GOOSE) {
+            else if (node.getStatus() == NodeStatus.GOOSE) {
                 System.out.println("На этих координатах расположен гусь. Введите координаты заново.");
             }
-            else if (node.getStatus() == Status.EMPTY) {
-                node.setStatus(Status.FOX);
+            else if (node.getStatus() == NodeStatus.EMPTY) {
+                node.setStatus(NodeStatus.FOX);
                 fox.setNode(node);
                 break;
             }

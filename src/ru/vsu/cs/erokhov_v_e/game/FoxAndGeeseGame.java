@@ -13,6 +13,7 @@ public class FoxAndGeeseGame implements CalculateMoves{
     private List<Goose> geese = new ArrayList<>();
     private String winner = "";
     private int geeseAmount;
+    private int globalCounter = 0;
 
     public FoxAndGeeseGame(Strategy foxStrategy, Strategy geeseStrategy, int geeseAmount) {
         this.foxStrategy = foxStrategy;
@@ -42,13 +43,15 @@ public class FoxAndGeeseGame implements CalculateMoves{
                 if (foxStrategy.moveFox(fox,geese,this)) {
                     foxTurn = !foxTurn;
                 }
+
                 System.out.println("\nИгровое поле после хода лисы:");
                 gameField.displayGameFieldMap();
             }
 
+            globalCounter++;
             checkGameStatus();
             if (gameIsOver) {
-                System.out.println("Игра завершена. Победитель" + winner + ".");
+                System.out.println("Игра завершена в "+globalCounter+" ходов. Победитель" + winner + ".");
                 break;
             }
 
@@ -59,9 +62,10 @@ public class FoxAndGeeseGame implements CalculateMoves{
                 gameField.displayGameFieldMap();
             }
 
+            globalCounter++;
             checkGameStatus();
             if (gameIsOver) {
-                System.out.println("Игра завершена. Победитель" + winner + ".");
+                System.out.println("Игра завершена в "+globalCounter+" ходов. Победитель" + winner + ".");
                 break;
             }
         }
@@ -79,7 +83,7 @@ public class FoxAndGeeseGame implements CalculateMoves{
         List<Node> foxNodeConnections = fox.getNode().getConnections();
         upperLoop:
         for (Node node1 : foxNodeConnections) {
-            if (node1.getStatus() != Status.GOOSE) {
+            if (node1.getStatus() != NodeStatus.GOOSE) {
                 geeseBlockedFox = false;
                 break upperLoop;
             }
@@ -87,7 +91,7 @@ public class FoxAndGeeseGame implements CalculateMoves{
                 if ((Math.abs(node2.getCoordinate().getX()-x) == 0 && Math.abs(node2.getCoordinate().getY()-y) == 2) ||
                         (Math.abs(node2.getCoordinate().getX()-x) == 2 && Math.abs(node2.getCoordinate().getY()-y) == 0) ||
                         (Math.abs(node2.getCoordinate().getX()-x) == 2 && Math.abs(node2.getCoordinate().getY()-y) == 2)) {
-                    if (node2.getStatus() != Status.GOOSE) {
+                    if (node2.getStatus() != NodeStatus.GOOSE) {
                         geeseBlockedFox = false;
                         break upperLoop;
                     }
@@ -108,7 +112,7 @@ public class FoxAndGeeseGame implements CalculateMoves{
                     Coordinate coordinate = new Coordinate(j,i);
                     if (gameField.getGameFieldMap().containsKey(coordinate)) {
                         Node node = gameField.getGameFieldMap().get(coordinate);
-                        node.setStatus(Status.GOOSE);
+                        node.setStatus(NodeStatus.GOOSE);
                         Goose goose = new Goose(node);
                         geese.add(goose);
                     }
@@ -119,7 +123,7 @@ public class FoxAndGeeseGame implements CalculateMoves{
                     Coordinate coordinate = new Coordinate(i,j);
                     if (gameField.getGameFieldMap().containsKey(coordinate)) {
                         Node node = gameField.getGameFieldMap().get(coordinate);
-                        node.setStatus(Status.GOOSE);
+                        node.setStatus(NodeStatus.GOOSE);
                         Goose goose = new Goose(node);
                         geese.add(goose);
                     }
@@ -133,7 +137,7 @@ public class FoxAndGeeseGame implements CalculateMoves{
                     Coordinate coordinate = new Coordinate(j,i);
                     if (gameField.getGameFieldMap().containsKey(coordinate)) {
                         Node node = gameField.getGameFieldMap().get(coordinate);
-                        node.setStatus(Status.GOOSE);
+                        node.setStatus(NodeStatus.GOOSE);
                         Goose goose = new Goose(node);
                         geese.add(goose);
                     }
@@ -167,26 +171,26 @@ public class FoxAndGeeseGame implements CalculateMoves{
             }
         }
 
-        if (connectedNode.getStatus() == Status.EMPTY) {
-            foxNode.setStatus(Status.EMPTY);
+        if (connectedNode.getStatus() == NodeStatus.EMPTY) {
+            foxNode.setStatus(NodeStatus.EMPTY);
             fox.setNode(connectedNode);
-            connectedNode.setStatus(Status.FOX);
+            connectedNode.setStatus(NodeStatus.FOX);
             return true;
         }
 
-        if (connectedNode.getStatus() == Status.GOOSE) {
+        if (connectedNode.getStatus() == NodeStatus.GOOSE) {
             Coordinate eatGooseCoordinate = foxCoordinate.get(movement, 2);
             Node eatGooseNode;
             for (int i = 0; i < connectedNode.getConnections().size(); i++) {
                 eatGooseNode = connectedNode.getConnections().get(i);
                 if (eatGooseNode.getCoordinate().equals(eatGooseCoordinate)) {
-                    if (eatGooseNode.getStatus() == Status.GOOSE) {
+                    if (eatGooseNode.getStatus() == NodeStatus.GOOSE) {
                         System.out.println("Можно съесть гуся, если только по итогу хода вы окажитесь на свободной клетке!");
                         return false;
                     }
-                    foxNode.setStatus(Status.EMPTY);
+                    foxNode.setStatus(NodeStatus.EMPTY);
                     fox.setNode(eatGooseNode);
-                    eatGooseNode.setStatus(Status.FOX);
+                    eatGooseNode.setStatus(NodeStatus.FOX);
                     eatGoose(connectedNode, geese);
                     System.out.println("Лиса съела гуся по координатам: x=" + goalCoordinate.getX() + ", y=" + goalCoordinate.getY() + ". Гусей осталось: " + geese.size() + ". Ходит снова лиса.");
                     return null;
@@ -204,7 +208,7 @@ public class FoxAndGeeseGame implements CalculateMoves{
                 break;
             }
         }
-        node.setStatus(Status.EMPTY);
+        node.setStatus(NodeStatus.EMPTY);
     }
 
     @Override
@@ -232,10 +236,10 @@ public class FoxAndGeeseGame implements CalculateMoves{
                 break;
             }
         }
-        if (connectedNode.getStatus() == Status.EMPTY) {
-            gooseNode.setStatus(Status.EMPTY);
+        if (connectedNode.getStatus() == NodeStatus.EMPTY) {
+            gooseNode.setStatus(NodeStatus.EMPTY);
             goose.setNode(connectedNode);
-            connectedNode.setStatus(Status.GOOSE);
+            connectedNode.setStatus(NodeStatus.GOOSE);
             return true;
         }
         return false;

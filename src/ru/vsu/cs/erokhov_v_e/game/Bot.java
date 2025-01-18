@@ -22,8 +22,8 @@ public class Bot implements Strategy {
        while (true) {
            coordinate = writeBotCoordinate();
            Node node = getNodeInter.getNode(coordinate);
-           if (node.getStatus() == Status.EMPTY) {
-               node.setStatus(Status.FOX);
+           if (node.getStatus() == NodeStatus.EMPTY) {
+               node.setStatus(NodeStatus.FOX);
                fox.setNode(node);
                break;
            }
@@ -33,6 +33,7 @@ public class Bot implements Strategy {
 
     @Override
     public boolean moveFox(Fox fox, List<Goose> geese, CalculateMoves calculateMoves) {
+       //calculateMoves.calculateGooseMove()
         System.out.println("Бот перемещает лису.");
         Movement movement = pickBotRandomMovementFox();
         while (true) {
@@ -52,6 +53,9 @@ public class Bot implements Strategy {
 
     @Override
     public void moveGoose(List<Goose> geese, CalculateMoves calculateMoves) {
+       //geese.get(0).setNode(new Node(new Coordinate(100, 100), Status.GOOSE));
+       //geese.get(0).getNode().getConnections()
+
         System.out.println("Бот перемещает гуся.");
         Goose goose = null;
         upperLoop1:
@@ -67,7 +71,7 @@ public class Bot implements Strategy {
                 if (Math.abs(gooseX-connectedNodeX) != 0 && Math.abs(gooseY-connectedNodeY) != 0) {
                     continue;
                 }
-                if (connectedNodes.get(j).getStatus() == Status.EMPTY) {
+                if (connectedNodes.get(j).getStatus() == NodeStatus.EMPTY) {
                     break upperLoop1;
                 }
             }

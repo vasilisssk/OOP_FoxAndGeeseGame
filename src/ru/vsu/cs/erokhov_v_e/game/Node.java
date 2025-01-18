@@ -5,11 +5,11 @@ import java.util.List;
 import java.util.Objects;
 
 public class Node {
-    private Status status;
+    private NodeStatus status;
     private Coordinate coordinates;
     private List<Node> connections = new ArrayList<>();
 
-    public Node(Coordinate coordinates, Status status) {
+    public Node(Coordinate coordinates, NodeStatus status) {
         this.coordinates = coordinates;
         this.status = status;
     }
@@ -26,11 +26,11 @@ public class Node {
         this.coordinates = coordinates;
     }
 
-    public Status getStatus() {
+    public NodeStatus getStatus() {
         return status;
     }
 
-    public void setStatus(Status status) {
+    public void setStatus(NodeStatus status) {
         this.status = status;
     }
 

@@ -11,7 +11,7 @@ public class GameField implements GetNode {
             for (int j = 0; j < 7; j++) {
                 if (!((i <= 1 && j <= 1) || (i <= 1 && j >= 5) || (i >= 5 && j <= 1) || (i >= 5 && j >= 5))) {
                     Coordinate coordinate = new Coordinate(i,j);
-                    gameFieldMap.put(coordinate, new Node(new Coordinate(i, j), Status.EMPTY));
+                    gameFieldMap.put(coordinate, new Node(new Coordinate(i, j), NodeStatus.EMPTY));
                 }
             }
         }
@@ -42,12 +42,12 @@ public class GameField implements GetNode {
             for (int j = 0; j < 7; j++) {
                 Coordinate coordinates = new Coordinate(j, i);
                 if (gameFieldMap.containsKey(coordinates)) {
-                    Status status = gameFieldMap.get(coordinates).getStatus();
-                    if (status == Status.FOX) {
+                    NodeStatus status = gameFieldMap.get(coordinates).getStatus();
+                    if (status == NodeStatus.FOX) {
                         finalString += "F";
-                    } else if (status == Status.GOOSE) {
+                    } else if (status == NodeStatus.GOOSE) {
                         finalString += "G";
-                    } else if (status == Status.EMPTY) {
+                    } else if (status == NodeStatus.EMPTY) {
                         finalString += "x";
                     }
                 } else {
