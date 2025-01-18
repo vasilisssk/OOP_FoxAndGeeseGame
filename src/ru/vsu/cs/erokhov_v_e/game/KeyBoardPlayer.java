@@ -7,6 +7,13 @@ import static ru.vsu.cs.erokhov_v_e.game.Util.*;
 
 public class KeyBoardPlayer implements Strategy {
 
+    public static final Factory FACTORY = new Factory() {
+        @Override
+        public Strategy create() {
+            return new KeyBoardPlayer();
+        }
+    };
+
     @Override
     public void placeFox(Fox fox, GetNode getNodeInter) {
         System.out.print("\nРазместите лису.");

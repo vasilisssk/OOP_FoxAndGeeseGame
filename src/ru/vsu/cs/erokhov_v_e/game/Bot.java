@@ -7,6 +7,13 @@ import static ru.vsu.cs.erokhov_v_e.game.Util.*;
 
 public class Bot implements Strategy {
 
+    public static final Factory FACTORY = new Factory() {
+        @Override
+        public Strategy create() {
+            return new Bot();
+        }
+    };
+
    @Override
     public void placeFox(Fox fox, GetNode getNodeInter) {
        System.out.println(Arrays.toString(Movement.values()));
@@ -60,7 +67,7 @@ public class Bot implements Strategy {
                 if (Math.abs(gooseX-connectedNodeX) != 0 && Math.abs(gooseY-connectedNodeY) != 0) {
                     continue;
                 }
-                if (connectedNodes.get(i).getStatus() == Status.EMPTY) {
+                if (connectedNodes.get(j).getStatus() == Status.EMPTY) {
                     break upperLoop1;
                 }
             }

@@ -17,12 +17,35 @@ public class Main {
                 scanner.next();
             }
         }
-        Bot bot1 = new Bot();
-        Bot bot2 = new Bot();
-        KeyBoardPlayer keyBoardPlayer1 = new KeyBoardPlayer();
-        KeyBoardPlayer keyBoardPlayer2 = new KeyBoardPlayer();
-        FoxAndGeeseGame foxAndGeeseGame = new FoxAndGeeseGame(bot1, keyBoardPlayer2, geeseAmount);
+
+        Factory[] factories = new Factory[]{
+                Bot.FACTORY,
+                KeyBoardPlayer.FACTORY
+        };
+
+        Strategy[] players = new Strategy[2];
+        for (int i = 0; i < 2; i++) {
+            players[i] = playerChoose(factories);
+        }
+
+        FoxAndGeeseGame foxAndGeeseGame = new FoxAndGeeseGame(players[0],players[1],geeseAmount);
         foxAndGeeseGame.play();
     }
 
+    public static Strategy playerChoose(Factory[] factories) {
+        StringBuilder output = new StringBuilder("Выберите тип игрока \n");
+        for (int i = 0; i < factories.length; i++) {
+            output.append(i).append(". ").append(factories[i].create()).append("\n");
+        }
+        System.out.println(output);
+        Scanner in = new Scanner(System.in);
+        Strategy player;
+        try {
+            player = factories[in.nextInt()].create();
+        } catch (Exception e) {
+            System.out.println("Напишите целое число от 1 до 2 без знаков препинания и пробелов");
+            return playerChoose(factories);
+        }
+        return player;
+    }
 }
